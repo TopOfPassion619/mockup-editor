@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Mockup Editor</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <link rel="stylesheet" href="./assets/css/main.min.css"> 
+  <script src="./assets/js/jquery.min.js"></script>
+  <!-- <script src="./assets/js/jquery-3.2.1.min.js"></script> -->
+  <script src="./assets/js/jquery.cropit.js"></script>
+  
+  <style>
+    body{
+      /* background: url(./assets/img/editor/settings.png) center center; */
+          background: url(./assets/img/editor/trans.png) center center;
+    }
+    
+
+    .canvas_container, .canvas-container {
+      margin: 0 auto;      
+    }
+    .btn {
+      border-radius: 0 !important; 
+    }
+    #text_container{
+      position: fixed;
+      visibility: hidden;
+      top: 10px;
+      left: 20%;
+      width: 300px;
+      border: none;
+    }
+    .ControlPanel .categories {
+      margin: 40px 0 0 0;
+      padding: 0 0;
+      left: 0;
+      position: relative;
+    }
+    .ControlPanel .categories li.selected {
+        height: 60px ;
+    }
+    .ControlPanel .categories li {
+        height: 60px ;
+    }
+    .ControlPanel {
+      z-index: 990;
+      position: fixed;
+      
+      width: 70px;
+      height: 100%;
+    }
+    .ControlPanel .itemsView.hide {
+      display: none;
+    }
+    .ControlPanel .itemsView.show {
+      display: block;
+    }
+    .ControlPanel .itemsView {
+        display: none;
+        left: 70px;
+        margin-left: 0px;
+        width: 350px;
+        height: 960px;
+        top: 0px;
+    }
+    .ControlPanel .itemsView .view {
+        height: 100%;
+        width: 305px;
+        z-index: 10;
+    } 
+    .ControlPanel .itemsView .view .inner ul.items {
+        margin: 0;
+        height: 850px;
+        padding: 3px 0 0 3px;
+    }
+    .ControlPanel .categories li.selected {
+        height: 75px;
+    }
+    .ControlPanel .itemsView .view .inner {
+        padding: 35px 0 0 15px;
+    }
+    .ControlPanel .itemsView .view .inner .search input {
+        width: calc(100% - 42px);
+    }
+    .images-item-upload[_ngcontent-c0] {
+      width: 8% !important;
+    }
+    .imageCropper{
+      display: none;
+    }
+    .show1 {
+      display: block;
+    }
+      .cropit-preview {
+        background-color: #f8f8f8;
+        background-size: cover;
+        border: 5px solid #ccc;
+        border-radius: 3px;
+        margin-top: 7px;
+          
+        width: 250px;
+        height: 250px;
+        zoom: 1;
+      }
+
+      .cropit-preview-image-container {
+        cursor: move;
+      }
+
+      .cropit-preview-background {
+        opacity: .2;
+        cursor: auto;
+      }
+
+      .image-size-label {
+        margin-top: 10px;
+      }
+
+      input, .export {
+        /* Use relative position to prevent from being covered by image background */
+        position: relative;
+        z-index: 10;
+        display: block;
+      }
+
+      button {
+        margin-top: 10px;
+      }
+      .imageCropper .export, .imageCropper #cropit_start{
+        display: none;
+      }
+      .imageCropper .cropit-preview {
+        margin: 0 auto;
+      }
+      .imageCropper .cropit-image-input, .imageCropper .cropit-image-zoom-input{
+        display: block;
+        width: 200px;
+        margin: 0 auto;
+      }
+      .imageCropper .btn_wrapper {
+        margin: 70px auto 0 auto;
+        display: table;
+      }
+      .imageCropper .btn_wrapper button {
+        margin-left: 20px;
+      }
+      .sceneProperties, .deskProperties{
+        margin-top: 120px;
+      }
+  </style>
+</head>
+<body>
+<app-root></app-root>
+</body>
+</html>
+
+<script>
+    $(document).ready(function() {
+
+      $('#pers').click(function(){
+              var width = image.width,
+              height = image.height,
+              context = $("canvas")[0].getContext("2d");
+          for (var i = 0; i <= height / 2; ++i) {
+              context.setTransform(1, -0.4 * i / height, 0, 1, 0, 60);
+              context.drawImage(image,
+                  0, height / 2 - i, width, 2,
+                  0, height / 2 - i, width, 2);
+              context.setTransform(1, 0.4 * i / height, 0, 1, 0, 60);
+              context.drawImage(image,
+                  0, height / 2 + i, width, 2,
+                  0, height / 2 + i, width, 2);
+          }
+      })
+      hh = window.innerHeight;
+      $('.itemsView').each(function(){
+        $(this).css('height', hh);
+      });
+      $('.ControlPanel .itemsView .view .inner ul.items').each(function(){
+        $(this).css('height', hh-100);
+      });
+    })
+    
+    $('.categories li').hover(function(){
+        $('.categories li').each(function(){
+            $(this).removeClass('selected');
+            $('.itemsView').removeClass('show');
+            $('.itemsView').addClass('hide');
+        });
+        $(this).addClass('selected');
+        cls = $(this).data('name') ;
+        $('.'+cls).addClass('show');
+        $(this).find('label').eq(0).css('opacity', 1);
+    });
+    $('.itemsView .close').click(function(){
+      $(this).closest('.itemsView').removeClass('show');
+      $(this).closest('.itemsView').addClass('hide');
+    });
+    $('.itemsView').mouseleave(function(e){
+      $(this).removeClass('show');
+    })
+    $('.mainMenuBtn').mouseover(function(){
+      $('.mainMenu').addClass('show');
+    });
+    $('.mainMenu').mouseleave(function(){
+      $('.mainMenu').removeClass('show');
+    });
+    function setText() {
+      $('#text_container').css('visibility', 'visible');
+    }
+     
+
+    $('.deskSurface').click(function(){
+        $('.imagelist').eq(1).addClass('show');
+    });
+    $('.deskLegs').click(function(){
+        $('.imagelist').eq(0).addClass('show');
+    });
+    $('.imagelist .close').click(function(){
+      $(this).closest('.imagelist').removeClass('show');
+    })
+    $('.ControlPanel .search').change(function(){
+      search_name = $(this).val();
+      $(this).closest('.inner').find('.items').eq(0).find('li').each(function(){
+        li = $(this);
+        name = li.find('.name').eq(0).html();
+        console.log(name);
+        console.log(name.indexOf(search_name));
+        if (name.indexOf(search_name)==-1)
+          li.css('display', 'none');
+      });
+    });
+     
+</script>
+<script>
+  $(function() {
+    $('.imageCropper').cropit({
+      exportZoom: 1.25,
+      smallImage: 'allow'
+    });
+
+    $('.rotate-cw').click(function() {
+      $('.imageCropper').cropit('rotateCW');
+    });
+    $('.rotate-ccw').click(function() {
+      $('.imageCropper').cropit('rotateCCW');
+    });
+
+    $('.export').click(function() {
+      var imageData = $('.imageCropper').cropit('export');
+      window.open(imageData);
+    });
+    $('body').on('click', '#crop', function() {
+      var imageData = $('.imageCropper').cropit('export');
+      $('#hidden_image_data').val(imageData);
+      $('#crop_ang').trigger('click');
+    });
+    $('body').on('click', '#cropit_start', function() {
+      var ww = $('#crop_ww').val();
+      var hh = $('#crop_hh').val();
+      console.log('ww' + ww);
+      console.log('hh' + hh);
+     
+       $('#cropit-preview').css('width', ww+'px');
+       $('#cropit-preview').css('height', hh+'px');
+
+       var height = window.innerHeight-230;
+      var zoom = height/hh;
+      $('#cropit-preview').css('zoom', zoom);
+      
+      $('.imageCropper').cropit( 'previewSize', { width: ww, height: hh } );
+      $('#cropit-image-input').trigger('click');
+    });
+    
+  });
+  
+</script>
